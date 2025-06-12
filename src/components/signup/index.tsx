@@ -75,21 +75,21 @@ const Signup = () => {
           Sign Up
         </button>
 
-        {/* Google signup button */}
+        {/* Google signup button 
         <button
           onClick={handleGoogleSignup}
           className="w-full p-3 bg-red-500 text-white rounded-md mt-4 hover:bg-red-600 transition duration-200"
         >
           Sign up with Google
-        </button>
+        </button>*/}
 
-        {/* Facebook signup button */}
+        {/* Facebook signup button
         <button
           onClick={handleFacebookSignup}
           className="w-full p-3 bg-blue-600 text-white rounded-md mt-4 hover:bg-blue-700 transition duration-200"
         >
           Sign up with Facebook
-        </button>
+        </button> */}
 
         {/* Login link */}
         <p className="mt-4 text-center">
