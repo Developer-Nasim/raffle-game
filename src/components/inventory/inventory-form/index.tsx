@@ -166,7 +166,7 @@ const InventoryForm: React.FC<InventoryFormProps> = ({
               </div>
 
               <div className="form-group">  </div>
-
+{/* 
               <div className="form-group filter-adding-form">
                 <h5>MAKE FILTERS SECTION (see Video)</h5>
                 <label htmlFor="ticketFilters">Filters</label>
@@ -200,9 +200,8 @@ const InventoryForm: React.FC<InventoryFormProps> = ({
                       <option value="1TB">1TB</option> 
                     </select>
                   </div> 
-                </div>
-                {/* {errors.ticketSold && <p className="text-red-500 text-sm">{errors.ticketSold.message}</p>} */}
-              </div>
+                </div> 
+              </div> */}
 
 
 
