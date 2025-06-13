@@ -88,13 +88,13 @@ const SidebarData: Array<SidebarData> = [
   },
   {
     id: 2,
-    title: "Inventory Database",
+    title: "Prize Database",
     url: "/inventory-database",
     icon: "/images/icon/02.svg",
   },
   {
     id: 3,
-    title: "Game Creation",
+    title: "Game Database",
     url: "/raffle-creation",
     icon: "/images/icon/03.svg",
   },

@@ -6,31 +6,38 @@ import Link from 'next/link';
 import Dropdown from '../../common/dropdown';
 import { toast } from "react-toastify";
 import ConfirmationModal from '../../common/modal';
+import { Timestamp } from 'firebase/firestore';
+import TimeStamptoDate from '../../../../utility/TimeStamptoDate';
+import Countdown from 'react-countdown';
 
-interface InventoryTableProps {
-  id: string;  // Changed to string
-  prizeName: string;
-  ticketSold: number;
-  price: string;
-  partner: string;
-  stockLevel: number;
-  status: 'Active' | 'Inactive' | 'Live' | 'Pending' | 'Ended';
-  thumbnail: string;
+
+interface RaffleTableProps {
+  id: any;
+  title: string;
+  picture: string;
+  description: string;
+  editedGamePicture: string;
+  createdAt: string;
+  expiryDate: string;
+  status: string;
 }
 
-interface InventoryTablePropsWithHeading {
+interface RaffleTablePropsWithHeading {
   heading: string;
-  items: InventoryTableProps[];  // Accepts items as prop
-  onDelete: (id: string) => void; // Changed to string
+  items: RaffleTableProps[];  // Accepts items as prop
+  onDelete: (id: number) => void; // Accepts delete handler as prop
 }
-
-const InventoryTable: React.FC<InventoryTablePropsWithHeading> = ({ heading, items, onDelete }) => {
+  // Renderer callback with condition
+  const renderer = ({ days, hours, minutes }: { days: number;hours: number; minutes: number }) => {
+      return <span>{days} Day: {hours} Hours: {minutes} Mins</span>;
+  };
+const ForDashboard: React.FC<RaffleTablePropsWithHeading> = ({ heading, items, onDelete }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [selectedItems, setSelectedItems] = useState<string[]>([]); // Changed to string[]
+  const [selectedItems, setSelectedItems] = useState<number[]>([]); // Track selected items
   const [selectAll, setSelectAll] = useState(false); // Track "Select All" checkbox state
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null); // Changed to string | null
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
   const router = useRouter();
   const itemsPerPage = 10;
@@ -38,25 +45,25 @@ const InventoryTable: React.FC<InventoryTablePropsWithHeading> = ({ heading, ite
   // Pagination logic
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const inventoryDataList = items.slice(startIndex, endIndex);
+  const raffleDataList = items.slice(startIndex, endIndex);
   const totalPages = Math.ceil(items.length / itemsPerPage);
 
   // Dropdown toggle
-  const handleDropdownToggle = (id: string) => { // Changed to string
+  const handleDropdownToggle = (id: string) => {
     setOpenDropdown((prev) => (prev === id ? null : id));
   };
 
   // Handlers for dropdown actions
-  const handleView = (id: string) => { // Changed to string
-    router.push(`/inventory-database/inventory-view/${id}`);
+  const handleView = (id: number) => {
+    router.push(`/raffle-creation/view/${id}`);
   };
 
-  const handleEdit = (id: string) => { // Changed to string
-    router.push(`/inventory-database/${id}`);
+  const handleEdit = (id: number) => {
+    router.push(`/raffle-creation/${id}`);
   };
 
   // Handle Delete
-  const handleDelete = (id: string) => { // Changed to string
+  const handleDelete = (id: number) => {
     setSelectedItemId(id); // Store the selected item id
     setIsModalOpen(true); // Show the modal
   };
@@ -74,7 +81,7 @@ const InventoryTable: React.FC<InventoryTablePropsWithHeading> = ({ heading, ite
   };
 
   // Handle individual checkbox selection
-  const handleCheckboxChange = (id: string) => { // Changed to string
+  const handleCheckboxChange = (id: number) => {
     setSelectedItems((prevSelected) => {
       if (prevSelected.includes(id)) {
         return prevSelected.filter((itemId) => itemId !== id); // Deselect
@@ -89,14 +96,14 @@ const InventoryTable: React.FC<InventoryTablePropsWithHeading> = ({ heading, ite
     if (selectAll) {
       setSelectedItems([]); // Deselect all
     } else {
-      const allItemIds = inventoryDataList.map((item) => item.id);
+      const allItemIds = raffleDataList.map((item) => item.id);
       setSelectedItems(allItemIds); // Select all
     }
     setSelectAll(!selectAll); // Toggle "Select All" state
   };
 
   // Check if all items on the current page are selected
-  const isAllSelected = inventoryDataList.every((item) =>
+  const isAllSelected = raffleDataList.every((item) =>
     selectedItems.includes(item.id)
   );
 
@@ -104,12 +111,29 @@ const InventoryTable: React.FC<InventoryTablePropsWithHeading> = ({ heading, ite
     setIsModalOpen(false); // Close modal on cancel
   };
 
+
+
+  const formatDate = (date: Timestamp | Date | string) => {
+    const jsDate = date instanceof Timestamp ? date.toDate() : new Date(date);
+    const options: Intl.DateTimeFormatOptions = {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    };
+    return jsDate.toLocaleDateString("en-GB", options); // e.g., "15 Apr 2025"
+  };
+  const limitWords = (text: string, wordLimit = 3): string => {
+    const words = text.trim().split(/\s+/);
+    if (words.length <= wordLimit) return text;
+    return words.slice(0, wordLimit).join(" ") + "...";
+  }; 
+
   return (
     <>
       <div className="border border-[#D0D5DD] rounded-xl py-6 bg-white w-full">
         {/* Header */}
         <div className="flex justify-between items-center mb-4 px-6">
-          <h1 className="text-[18px] font-semibold text-dark">{heading}</h1>
+          <h1 className="text-[18px] font-semibold text-dark">{heading} </h1>
           <div className="flex items-center space-x-2">
             <button className="inline-flex items-center gap-4 px-4 py-3 bg-white text-dark border border-[#E4E7EC] rounded-lg text-sm font-medium">
               <svg width="20" viewBox="0 0 20 20">
@@ -117,7 +141,7 @@ const InventoryTable: React.FC<InventoryTablePropsWithHeading> = ({ heading, ite
               </svg>
               <span>Filter</span>
             </button>
-            <Link href="/inventory-database/create-inventory" className="inline-block px-4 py-3 bg-primary text-white rounded-lg text-sm font-medium">
+            <Link href="/raffle-creation/create-raffle" className="inline-block px-4 py-3 bg-primary text-white rounded-lg text-sm font-medium">
               + Create New
             </Link>
           </div>
@@ -135,19 +159,19 @@ const InventoryTable: React.FC<InventoryTablePropsWithHeading> = ({ heading, ite
                       checked={isAllSelected}
                       onChange={handleSelectAllChange}
                     />
-                    <span>Prize Name</span>
+                    <span>Game Name</span>
                   </div>
                 </th>
-                <th className="text-[12px] font-medium text-gray border-0 py-3 px-6">Tickets Sold</th>
+                <th className="text-[12px] font-medium text-gray border-0 py-3 px-6">Ticket sold</th>
                 <th className="text-[12px] font-medium text-gray border-0 py-3 px-6">Price</th>
                 <th className="text-[12px] font-medium text-gray border-0 py-3 px-6">Partner</th>
-                <th className="text-[12px] font-medium text-gray border-0 py-3 px-6">Stock Level</th>
+                <th className="text-[12px] font-medium text-gray border-0 py-3 px-6">Time to End</th>
                 <th className="text-[12px] font-medium text-gray border-0 py-3 px-6">Status</th>
-                <th className="text-[12px] font-medium text-gray border-0 py-3 px-6 text-center">Action</th>
+                <th className="text-[12px] font-medium text-gray border-0 py-3 px-6">Action</th>
               </tr>
             </thead>
             <tbody>
-              {inventoryDataList.map((item) => (
+              {raffleDataList.map((item) => (
                 <tr key={item.id} className="border-b !border-[#D0D5DD]">
                   <td className="text-sm text-gray py-3 px-6">
                     <div className="flex items-center gap-3">
@@ -158,43 +182,49 @@ const InventoryTable: React.FC<InventoryTablePropsWithHeading> = ({ heading, ite
                       />
                       <span className="h-10 w-10 min-w-10 bg-white rounded-full border border-[#D0D5DD] overflow-hidden">
                         <Image
-                          src={item.thumbnail || '/images/laptop.webp'}
+                          src={item.picture || '/images/laptop.webp'}
                           loading="lazy"
                           height={40}
                           width={40}
                           quality={100}
-                          alt={item.prizeName}
+                          alt={item.title}
                           className="object-cover h-10"
                         />
                       </span>
-                      <span className="text-dark font-medium text-sm">{item.prizeName}</span>
+                      <span className="text-dark font-medium text-sm">{limitWords(item.title)}</span>
                     </div>
                   </td>
-                  <td className="text-sm text-gray py-3 px-6">{item.ticketSold}</td>
-                  <td className="text-sm text-gray py-3 px-6">${item.price}</td>
-                  <td className="text-sm text-gray py-3 px-6">{item.partner}</td>
                   <td className="text-sm text-gray py-3 px-6">
                     <div className="flex items-center gap-3">
-                      <div className="w-full bg-[#EAECF0] rounded-full h-2">
-                        <div
-                          className="bg-red-500 h-2 rounded-full"
-                          style={{ width: `${item.stockLevel}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-gray-700 text-sm">{item.stockLevel}</span>
+                      {(Math.random(10,1000) * 1000).toFixed(0)}
                     </div>
                   </td>
+                  <td className="text-sm text-gray py-3 px-6">${(Math.random(10,500) * 500).toFixed(0)}</td>
+                  <td className="text-sm text-gray py-3 px-6">Kwesi</td>
+                  <td className="text-sm text-gray py-3 px-6">       
+                    <Countdown
+                        date={
+                          item.expiryDate && typeof item.expiryDate.toDate === "function"
+                            ? item.expiryDate.toDate().getTime()
+                            : new Date(item.expiryDate).getTime()
+                        }
+                        renderer={renderer}
+                      />
+                    </td>
                   <td className="text-sm text-gray py-3 px-6">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium border ${item.status === 'Active' ? 'border-[#D0D5DD] text-[#067647]' : "border-[#D12A2A] text-[#D12A2A]"
+                      className={`px-3 py-1 rounded-full text-xs font-medium border ${(item.status || "Active") === "Active"
+                          ? "border-[#D0D5DD] text-[#067647]"
+                          : "border-[#D12A2A] text-[#D12A2A]"
                         }`}
                     >
-                      {item.status}
+                      {(item.status || "Active") === "Active" ? "Live" : "Ended"}
                     </span>
+
                   </td>
-                  <td className="text-sm text-gray py-3 px-6 text-center">
+                  <td className="text-sm text-gray py-3 px-6">
                     <Dropdown
-                      id={Number(item.id)}
+                      id={item.id}
                       isOpen={openDropdown === `${item.id}`}
                       toggleDropdown={() => handleDropdownToggle(`${item.id}`)}
                       options={[
@@ -210,7 +240,7 @@ const InventoryTable: React.FC<InventoryTablePropsWithHeading> = ({ heading, ite
           </table>
         </div>
 
-        {inventoryDataList.length > 9 && (
+        {raffleDataList.length > 9 && (
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -224,10 +254,10 @@ const InventoryTable: React.FC<InventoryTablePropsWithHeading> = ({ heading, ite
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
-        message="Delete Inventory"
+        message="Delete Raffle"
       />
     </>
   );
 };
 
-export default InventoryTable;
+export default ForDashboard;

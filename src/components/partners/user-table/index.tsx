@@ -6,6 +6,7 @@ import Link from "next/link";
 import ConfirmationModal from "@/components/common/modal";
 import Pagination from "@/components/common/pagination";
 import Dropdown from "@/components/common/dropdown";
+import TimeStamptoDate from "../../../../utility/TimeStamptoDate";
 
 interface User {
   id: string;
@@ -116,11 +117,11 @@ const PartnerTable: React.FC<PartnerTableProps> = ({
                 </td>
                 <td className="py-3 px-6 text-sm">{item.email}</td>
                 <td className="py-3 px-6 text-sm">{item.access}</td>
-                <td className="py-3 px-6 text-sm">{formatDate(item.registrationDate)}</td>
+                <td className="py-3 px-6 text-sm">{TimeStamptoDate(item.registrationDate)}</td>
                 <td className="py-3 px-6 text-sm">
                   <span className={`px-2 py-1 rounded-full text-xs border font-medium ${item.status === "Active"
                       ? "text-[#067647] border-[#D0D5DD]"
-                      : "text-primary border-primary"
+                      : "text-[#D12A2A] border-[#D12A2A]"
                     }`}>
                       {/* {item.status === "Active" ? "Live" : "Ended"}  */}
                       {item.status} 
@@ -130,7 +131,7 @@ const PartnerTable: React.FC<PartnerTableProps> = ({
                   <span className={`px-2 py-1 rounded-full text-xs border font-medium ${item.kycRequest === "Approved"
                       ? "text-[#067647] border-[#D0D5DD]"
                       : item.kycRequest === "Pending"
-                        ? "text-primary border-primary"
+                        ? "text-[#D12A2A] border-[#D12A2A]"
                         : "text-red-600 border-red-600"
                     }`}>
                     {item.kycRequest}

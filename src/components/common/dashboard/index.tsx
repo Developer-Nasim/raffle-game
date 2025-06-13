@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import GraphComponent from "../graph";
-import SmallTable from "./table/smTable";
-import InventoryTable from "../../inventory/inventory-table";
+import SmallTable from "./table/smTable"; 
 import { deleteData } from "../../../../utility";
 import { toast } from "react-toastify";
 import { getAllRaffles } from "../../../../service/raffleService";
 import { collection, getDocs, query, limit } from "firebase/firestore";
-import { db } from "../../../../config/firebase.config";
+import { db } from "../../../../config/firebase.config"; 
+import ForDashboard from "@/components/raffle/table/ForDashboard";
 
 export const fetchUser = async (collectionName: string, limitCount: number = 5) => {
   const collectionRef = collection(db, collectionName);
@@ -31,7 +31,8 @@ export interface RaffleItem {
 }
 
 const Dashboard: React.FC<DashboardProps> = () => {
-const [inventoryData, setInventoryData] = useState<any[]>([]);
+  const [inventoryData, setInventoryData] = useState<any[]>([]);
+  const [raffleData, setRaffleData] = useState<any[]>([]);
 
   useEffect(() => {
     getTopInventory();
@@ -69,6 +70,35 @@ const [inventoryData, setInventoryData] = useState<any[]>([]);
     fetchRaffles();
   }, []);
 
+
+
+
+  
+    // Fetch raffle data from Firestore
+    useEffect(() => {
+      const fetchRaffles = async () => {
+        try {
+          const querySnapshot = await getDocs(collection(db, "raffles"));
+          const data: any[] = [];
+  
+          querySnapshot.forEach((doc) => {
+            data.push({
+              id: doc.id,
+              ...doc.data(),
+            });
+          });
+  
+          setRaffleData(data);
+        } catch (error) {
+          console.error("Error fetching raffles:", error);
+        }
+      };
+  
+      fetchRaffles();
+    }, []);
+
+ 
+
   // Assuming you want the top 7 best-sellers (you can adjust the logic here)
   const bestSellers = inventoryData.slice(0, 5); // Take the top 7 items as best sellers
 
@@ -82,10 +112,15 @@ const [inventoryData, setInventoryData] = useState<any[]>([]);
             </div>
             <div className="xl:col-span-3">
                 <div className="best-inventory-table">
-                    <InventoryTable
+                    {/* <InventoryTable
                         items={inventoryData}
-                        heading="Inventory List"
+                        heading="Games"
                         onDelete={handleDelete}
+                    /> */}
+                    <ForDashboard
+                      items={raffleData}
+                      heading="Games"
+                      onDelete={handleDelete}
                     />
                 </div>
             </div>

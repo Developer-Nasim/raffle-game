@@ -38,7 +38,7 @@ const CreateUser = () => {
     }
   };
 
-  return <UserForm formHeading="Create User" onSubmit={handleCreateUser} />;
+  return <UserForm formHeading="Create Partner" onSubmit={handleCreateUser} />;
 };
 
 export default CreateUser;

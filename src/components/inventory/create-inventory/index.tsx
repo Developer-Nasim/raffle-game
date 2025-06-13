@@ -20,7 +20,7 @@ const CreateInventory: React.FC = () => {
   return (
     <div>
       <InventoryForm
-        formHeading="Create Inventory"
+        formHeading="Create Prize"
         onSubmit={handleCreate}
       />
     </div>

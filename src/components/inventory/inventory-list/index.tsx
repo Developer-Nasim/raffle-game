@@ -38,7 +38,7 @@ const InventoryList: React.FC = () => {
     <div className="inventory-list">
       <InventoryTable
         items={inventoryData}
-        heading="Prize Inventory List"
+        heading="Prize List"
         onDelete={handleDelete}
       />
     </div>

@@ -24,7 +24,7 @@ const UserList: React.FC = () => {
           userName: data.name || "",
           email: data.email || "",
           access: data.userType || "",
-          registrationDate: data.createdAt ? data.createdAt.toDate().toISOString() : "",
+          registrationDate: data.createdAt && typeof data.createdAt == 'function' ? data.createdAt.toDate().toISOString() : data.createdAt,
           status: data.isBanned ? "Blocked" : "Active",
           kycRequest: data.kycRequest || "Pending",
           thumbnail: data.profilePicture || null,

@@ -210,7 +210,7 @@ const RaffleTable: React.FC<RaffleTablePropsWithHeading> = ({ heading, items, on
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium border ${(item.status || "Active") === "Active"
                           ? "border-[#D0D5DD] text-[#067647]"
-                          : "border-primary text-primary"
+                          : "border-[#D12A2A] text-[#D12A2A]"
                         }`}
                     >
                       {(item.status || "Active") === "Active" ? "Live" : "Ended"}

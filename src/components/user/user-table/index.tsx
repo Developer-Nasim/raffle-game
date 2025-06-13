@@ -6,6 +6,8 @@ import Link from "next/link";
 import ConfirmationModal from "@/components/common/modal";
 import Pagination from "@/components/common/pagination";
 import Dropdown from "@/components/common/dropdown";
+import TimeStamptoDate from "../../../../utility/TimeStamptoDate";
+
 
 interface User {
   id: string;
@@ -42,14 +44,7 @@ const UserTable: React.FC<UserTableProps> = ({
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedItems = items.slice(startIndex, startIndex + itemsPerPage);
 
-  const formatDate = (date: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    };
-    return new Date(date).toLocaleDateString("en-GB", options);
-  };
+ 
 
   const handleDropdownToggle = (id: string) => {
     setOpenDropdown(openDropdown === id ? null : id);
@@ -97,9 +92,9 @@ const UserTable: React.FC<UserTableProps> = ({
               <th className="py-3 px-6 text-[12px] font-medium text-gray">User</th>
               <th className="py-3 px-6 text-[12px] font-medium text-gray">Email</th>
               <th className="py-3 px-6 text-[12px] font-medium text-gray">Access</th>
-              <th className="py-3 px-6 text-[12px] font-medium text-gray">Date</th>
+              <th className="py-3 px-6 text-[12px] font-medium text-gray">Registration Date</th>
               <th className="py-3 px-6 text-[12px] font-medium text-gray">Status</th>
-              <th className="py-3 px-6 text-[12px] font-medium text-gray">KYC</th>
+              <th className="py-3 px-6 text-[12px] font-medium text-gray">KYC Request</th>
               <th className="py-3 px-6 text-[12px] font-medium text-gray">Action</th>
             </tr>
           </thead>
@@ -116,7 +111,7 @@ const UserTable: React.FC<UserTableProps> = ({
                 </td>
                 <td className="py-3 px-6 text-sm">{item.email}</td>
                 <td className="py-3 px-6 text-sm">{item.access}</td>
-                <td className="py-3 px-6 text-sm">{formatDate(item.registrationDate)}</td>
+                <td className="py-3 px-6 text-sm">{TimeStamptoDate(item.registrationDate)}</td>
                 <td className="py-3 px-6 text-sm">
                   <span className={`px-2 py-1 rounded-full text-xs border font-medium ${item.status === "Active"
                       ? "text-[#067647] border-[#D0D5DD]"
@@ -130,7 +125,7 @@ const UserTable: React.FC<UserTableProps> = ({
                   <span className={`px-2 py-1 rounded-full text-xs border font-medium ${item.kycRequest === "Approved"
                       ? "text-[#067647] border-[#D0D5DD]"
                       : item.kycRequest === "Pending"
-                        ? "text-primary border-primary"
+                        ? "text-[#D12A2A] border-[#D12A2A]"
                         : "text-red-600 border-red-600"
                     }`}>
                     {item.kycRequest}
