@@ -111,7 +111,13 @@ const UserTable: React.FC<UserTableProps> = ({
                 </td>
                 <td className="py-3 px-6 text-sm">{item.email}</td>
                 <td className="py-3 px-6 text-sm">{item.access}</td>
-                <td className="py-3 px-6 text-sm">{TimeStamptoDate(item.registrationDate)}</td>
+                <td className="py-3 px-6 text-sm">
+                  {typeof item.registrationDate === "object" && item.registrationDate !== null && "seconds" in item.registrationDate
+                    ? TimeStamptoDate(item.registrationDate as { seconds: number; nanoseconds: number })
+                    : (typeof item.registrationDate === "string"
+                        ? new Date(item.registrationDate).toLocaleDateString()
+                        : "")}
+                </td>
                 <td className="py-3 px-6 text-sm">
                   <span className={`px-2 py-1 rounded-full text-xs border font-medium ${item.status === "Active"
                       ? "text-[#067647] border-[#D0D5DD]"

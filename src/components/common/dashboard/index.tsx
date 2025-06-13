@@ -50,7 +50,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   };
 
   // Handle item deletion
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: any) => {
     try {
       await deleteData("prize_database", id, (message: string) => {
         toast(message);

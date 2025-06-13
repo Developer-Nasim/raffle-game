@@ -17,8 +17,8 @@ interface RaffleTableProps {
   picture: string;
   description: string;
   editedGamePicture: string;
-  createdAt: string;
-  expiryDate: string;
+  createdAt: string | Timestamp;
+  expiryDate: string | Timestamp;
   status: string;
 }
 
@@ -196,20 +196,22 @@ const ForDashboard: React.FC<RaffleTablePropsWithHeading> = ({ heading, items, o
                   </td>
                   <td className="text-sm text-gray py-3 px-6">
                     <div className="flex items-center gap-3">
-                      {(Math.random(10,1000) * 1000).toFixed(0)}
+                      {(Math.random() * 1000).toFixed(0)}
                     </div>
                   </td>
-                  <td className="text-sm text-gray py-3 px-6">${(Math.random(10,500) * 500).toFixed(0)}</td>
+                  <td className="text-sm text-gray py-3 px-6">${(Math.random() * 500).toFixed(0)}</td>
                   <td className="text-sm text-gray py-3 px-6">Kwesi</td>
                   <td className="text-sm text-gray py-3 px-6">       
-                    <Countdown
-                        date={
-                          item.expiryDate && typeof item.expiryDate.toDate === "function"
-                            ? item.expiryDate.toDate().getTime()
-                            : new Date(item.expiryDate).getTime()
-                        }
-                        renderer={renderer}
-                      />
+                   <Countdown
+                      date={
+                        typeof item.expiryDate === "object" &&
+                        item.expiryDate !== null &&
+                        "toDate" in item.expiryDate
+                          ? (item.expiryDate as Timestamp).toDate().getTime()
+                          : new Date(item.expiryDate).getTime()
+                      }
+                      renderer={renderer}
+                    />
                     </td>
                   <td className="text-sm text-gray py-3 px-6">
                     <span
@@ -228,9 +230,9 @@ const ForDashboard: React.FC<RaffleTablePropsWithHeading> = ({ heading, items, o
                       isOpen={openDropdown === `${item.id}`}
                       toggleDropdown={() => handleDropdownToggle(`${item.id}`)}
                       options={[
-                        { id: 1, name: '/images/icon/eye1.svg', action: () => handleView(item.id) },
-                        { id: 2, name: '/images/icon/edit1.svg', action: () => handleEdit(item.id) },
-                        { id: 3, name: '/images/icon/delete1.svg', action: () => handleDelete(item.id) },
+                        { id: 1, name: '/images/icon/eye1.svg', action: () => handleView(Number(item.id)) },
+                        { id: 2, name: '/images/icon/edit1.svg', action: () => handleEdit(Number(item.id)) },
+                        { id: 3, name: '/images/icon/delete1.svg', action: () => handleDelete(Number(item.id)) },
                       ]}
                     />
                   </td>
